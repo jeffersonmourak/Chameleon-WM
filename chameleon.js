@@ -1,25 +1,119 @@
 //---------------------------init--------------------------------------------
 /*
-   Created by EasyJS
+   Developed by EasyJS
    Last modifier: Lucas Vendramini - 2014
 */
-//---------------------------------------------------------------------------
-
 
 //---------------------------init--------------------------------------------
 
 window.addEventListener("load", function(){
 
 
+//-------------------CGButton - Chameleon Generic button----------------------
+      
+    function CGButton(height, width, color, barGradient, radius, bSize, parent, clickEvent, 
+      actionObj){
+   
+       this.height = height || 30; //altura do botão
+       this.width = width || 30; //largura do botão
+       this.color = color || "#f00";//cor do botão
+       
+       this.barGradient = barGradient || true;
+       
+       this.radius = radius || 5;//raio da borda do botão
+       this.bSize = bSize || 3;
+       
+       this.parent = parent || document.body;//pai do objeto
+       this.content = content || "";//conteúdo do objeto;
+       this.clickEvent = clickEvent || null;//função realizada ao clicar no botão
+       
+       this.actionObj = actionObj || false;
+    }
+
+
+/*---------------------create method of CGButton-------------------------------*/
+   
+   CGButton.prototype.create = function(){
+   
+      var button = document.createElement("BUTTON");
+      
+      button.style.height = this.height + "px";
+      button.style.width = this.width + "px";
+      
+      button.style.backgroundColor = this.color;
+      
+      button.style.borderRadius = this.radius + "px";
+      
+      button.style.borderWidth = this.bSize + "px";
+      
+      button.style.borderStyle = "groove";
+                
+      button.textContent = this.content;
+                 
+      button.style.margin = "5px";
+      button.style.color = "#fff";            
+      
+      var actObj =  this.actionObj;
+            
+      if(this.clickEvent == "close"){      
+                 
+         button.addEventListener("click",function(){
+                  
+            actObj.destroy();                  
+         });    
+            
+      }
+      
+      if(actObj.barAlign == true){
+      
+         button.style.cssFloat = "right";
+         
+      }     
+         
+      this.parent.appendChild(button);  
+   }
+
+/*--------------------objeto CDialog - Chameleon Dialog----------------------*/
+
+   function CDialog(msg, title , option, barAlign){
+         
+      this.msg = msg || "Are you sure?";
+      
+      this.title = title || "Message";
+      this.option = option || "yesno";    
+      this.barAlign = barAlign || false;           
+   }
+      
+   CDialog.prototype.create = function(){
+   
+      var dialog = new CWindow(200, 300);
+      
+      dialog.hStretch = dialog.vStretch = false;
+      dialog.title = this.title;
+                
+      dialog.barAlign = this.barAlign;      
+      
+      var testeButton = new CGButton(50,100);    
+      
+      testeButton.parent = dialog.htmlObj;
+                           
+      dialog.create();      
+      
+      testeButton.create();    
+         
+   }
 /*----------------------objeto CWindow - Chameleon Window--------------------*/   
    
-   function CWindow(height, width, color, radius, drag, hStretch, vStretch, 
-      barAlign, barColor, parent, content, title){
+   function CWindow(height, width, color, radius, bSize, drag, hStretch, vStretch, 
+      barAlign, barColor, barGradient , parent, content, title){
 
       this.height = height || 200; //altura da janela
       this.width = width || 300; //largura da janela
       this.color = color || "#aaa";//cor da janela
       this.radius = radius || 10;//raio da borda da janela
+      
+      this.bSize = bSize || 5; //espessura da borda;
+      
       this.drag = drag || true;//arraste desativado/ativado
       
       this.hStretch = hStretch || true;//ajuste horizontal da janela
@@ -27,13 +121,14 @@ window.addEventListener("load", function(){
       
       this.barAlign = barAlign || false//false - icones a esquerda, true - direita
       this.barColor = barColor || "#00f"//false - icones a esquerda, true - direita
-      
-      
+            
       this.parent = parent || document.body;// null - body, else - elemento pai
 
       this.content = content || "";
       
-      this.title = title || "Janela bolada";           
+      this.title = title || "Janela bolada";     
+      
+      this.barGradient = barGradient || "linear-gradient("+ this.barColor+ ", black)";       
 
    }    
 
@@ -45,8 +140,20 @@ window.addEventListener("load", function(){
       winObj.style.width = this.width + "px";
       winObj.style.backgroundColor = this.color;
       winObj.style.borderRadius = this.radius + "px";
+      
+      winObj.style.borderWidth = this.bSize + "px";
       winObj.style.borderStyle = "groove";
-
+      
+           
+      
+/*---------------------------div de conteudo---------------------------------*/           
+      var divContent = document.createElement("DIV");
+            
+      divContent.textContent = this.content;
+                   
+      divContent.style.position = "relative";     
+      divContent.style.margin = "5px";
+                    
       winObj.style.position = "absolute";//"absolute";
 
       var lmb = false; //sensor do botão esquerdo do mouse
@@ -54,96 +161,34 @@ window.addEventListener("load", function(){
       var pResize = 0.8;//proporção de resize em %
       
       var obj = this;      
-      
-      
-//-------------------destroy method of CWindow--------------------------------
-      
-      CWindow.prototype.destroy = function(){
-  
-         this.parent.removeChild(winObj); 
-  
-      }
-      
-      
-//-------------------CWButton - Chameleon Window button----------------------
-   
-   
-    function CWButton(height, width, color, radius, parent, clickEvent){
-   
-       this.height = height || 40; //altura do botão
-       this.width = width || 40; //largura do botão
-       this.color = color || "#f00";//cor do botão
-       this.radius = radius || 5;//raio da borda do botão
-       this.parent = parent || document.body;//pai do objeto
-       this.content = content || "";//conteúdo do objeto;
-       this.clickEvent = clickEvent || null;//função realizada ao clicar no botão
-   
-   }
 
 
-   CWButton.prototype.create = function(){
-   
-      var button = document.createElement("BUTTON");
-      
-      button.style.height = this.height + "px";
-      button.style.width = this.width + "px";
-      
-      button.style.backgroundColor = this.color;
-      
-      button.style.borderRadius = this.radius + "px";
-      button.style.borderStyle = "groove";
-      button.textContent = this.content;
-            
-      
-      if(this.clickEvent == "close"){      
-            
-            
-         button.addEventListener("click",function(){
-         
-         
-            obj.destroy();
-         
-         
-         } );    
-      
-      
-      }
-      
-      if(this.barAlign){
-      
-         closeButton.style.cssFloat = "right";
-         
-      }
-      else{
-      
-         pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
-      
-         winObj.addEventListener("mousemove", function(){
-         
-            pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
-      
-         });
-      }
-         
-      this.parent.appendChild(button);
-   
-   
-   }
+//-------------------append content method of CWindow-------------------------
 
-//-------------------------------------------------------------------------      
-
+      CWindow.prototype.appendContent = function(html, newline){
+              
+         if(newline){     
+            divContent.innerHTML += "<br>" + html;     
+         }
+         
+         else{
+            divContent.textContent += html;
+         }
+      }    
 
       winObj.addEventListener("mousedown", function(e){
          
          lmb = true;   
          
          if(winObj.style.cursor != "default"){
+            //se o cursor for diferente do padrão
+            //o redimensionamento está ativado
             
             resize = true;
          }
          
          else{
-         
+            //caso contrário desativado
             resize = false;         
          }         
               
@@ -151,7 +196,7 @@ window.addEventListener("load", function(){
 
       window.addEventListener("mouseup", function(){
          
-         lmb = false;
+         lmb = false;//botão do mouse levantando, censor desativado
       }); 
 
        winObj.addEventListener("mousemove", function(e){
@@ -229,28 +274,32 @@ window.addEventListener("load", function(){
       
       winObj.style.overflow = "hidden";
       
-      obj.parent.appendChild(winObj);    
-      
+      obj.parent.appendChild(winObj); 
+                
+      this.obj = winObj;          
+                
+       
       
  //-----------------------barra de ícones -------------------------------*/     
       
       var iconBar = document.createElement("DIV");
-      
-      
+            
       iconBar.style.height = "50px";
       iconBar.style.backgroundColor = this.barColor;
-      //iconBar.style.marginLeft = "2px";
-      
             
-      winObj.addEventListener("mousemove", function(){
-         
-         iconBar.style.width = (parseInt(winObj.style.width)) + "px";
+      iconBar.style.position = "relative";    
       
+      if(obj.barGradient){
+         iconBar.style.backgroundImage = obj.barGradient;    
+      }      
+      winObj.addEventListener("mousemove", function(){
+         iconBar.style.width = (parseInt(winObj.style.width)) + "px";
       });
       
       iconBar.style.overflow = "hidden";            
-      winObj.appendChild(iconBar);
       
+      winObj.appendChild(divContent);
+      winObj.insertBefore(iconBar, divContent);
       
 //--------------------------title-------------------------------------------        
      
@@ -259,34 +308,48 @@ window.addEventListener("load", function(){
      pTitle.textContent = obj.title;
      pTitle.style.color = "#fff";
      pTitle.style.fontWeight = "bold";
-     
      pTitle.style.margin = "10px";
-     
      pTitle.style.position = "absolute";
      
-     iconBar.appendChild(pTitle);
+     iconBar.appendChild(pTitle);   
      
+     
+      if(!this.barAlign){
+      
+         pTitle.style.left = (parseInt(winObj.style.width) - 13 * obj.title.length) + "px";
+      
+         winObj.addEventListener("mousemove", function(){
+         
+            pTitle.style.left = (parseInt(winObj.style.width) - 13 * obj.title.length) + "px";
+      
+         });
+      }      
      
 //---------------------botão fechar------------------------------------------*/     
-  
-      
-      var closeButton = new CWButton();
+        
+      var closeButton = new CGButton();
       
       closeButton.content = "X";
       closeButton.parent = iconBar;
       closeButton.clickEvent = "close";
-      
-      
-      closeButton.create();
-                             
-  }
+      closeButton.actionObj = obj;
+            
+      closeButton.create();                             
+  } 
   
+//-------------------destroy method of CWindow--------------------------------
+      
+      CWindow.prototype.destroy = function(){
+  
+         this.parent.removeChild(this.obj);
+      }   
 
 /*---------------------------instancias-----------------------------------*/
-   
-   var win = new CWindow(500, 500);
-   win.title = "Teste - Bolado.com.br - IguanaOS";
-   win.create();        
-   
+        
+  var dialog = new CDialog();
   
+  dialog.barAlign = true;
+    
+  dialog.create();
+   
 });
