@@ -1,4 +1,12 @@
 //---------------------------init--------------------------------------------
+/*
+   Created by EasyJS
+   Last modifier: Lucas Vendramini - 2014
+
+*/
+//---------------------------------------------------------------------------
+
+//---------------------------init--------------------------------------------
 
 window.addEventListener("load", function(){
    
@@ -21,10 +29,9 @@ window.addEventListener("load", function(){
       
       this.parent = parent || document.body;// null - body, else - elemento pai
 
-      this.content = content || "";
+      this.content = content || "";//conteudo da janela
       
-      this.title = title || "Janela bolada";     
-      
+      this.title = title || "Janela bolada";      //título da janela     
 
    } 
    
@@ -164,7 +171,6 @@ window.addEventListener("load", function(){
       
       iconBar.style.height = "50px";
       iconBar.style.backgroundColor = this.barColor;
-      //iconBar.style.marginLeft = "2px";
       
             
       winObj.addEventListener("mousemove", function(){
@@ -173,7 +179,7 @@ window.addEventListener("load", function(){
       
       });
       
-                  
+      iconBar.style.overflow = "hidden";            
       winObj.appendChild(iconBar);
       
       
@@ -214,14 +220,20 @@ window.addEventListener("load", function(){
          
       }
       else{
+      
+         pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
+      
+         winObj.addEventListener("mousemove", function(){
          
-        // pTitle.style.cssFloat = "right"; parei aqui sfsdfdsfsdfsf3$@$@#$S
+            pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
+      
+         });
       }
       
       
       closeButton.addEventListener("click", function(){
       
-         //obj.parent.removeChild(winObj);
+         
          obj.destroy();
       
       });
@@ -235,20 +247,13 @@ window.addEventListener("load", function(){
    
    var win = new CWindow();
    
-   win.barAlign = true;
-   win.barColor = "#0f0";
+   win.barAlign = false;
+   //win.barColor = "#0f0"; 
+   win.title = "Teste - titulo bolado";
    
-   
-   win.create();    
-   
+   win.create();       
   
    
-   var win2 = new CWindow();
   
-   win2.barAlign = true;
-  
-   win2.create();
-      
-   
 
 });
