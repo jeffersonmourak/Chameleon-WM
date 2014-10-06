@@ -2,15 +2,17 @@
 /*
    Created by EasyJS
    Last modifier: Lucas Vendramini - 2014
-
 */
 //---------------------------------------------------------------------------
+
 
 //---------------------------init--------------------------------------------
 
 window.addEventListener("load", function(){
+
+
+/*----------------------objeto CWindow - Chameleon Window--------------------*/   
    
-/*----------------------objeto cWindow-----------------------------------*/   
    function CWindow(height, width, color, radius, drag, hStretch, vStretch, 
       barAlign, barColor, parent, content, title){
 
@@ -29,12 +31,11 @@ window.addEventListener("load", function(){
       
       this.parent = parent || document.body;// null - body, else - elemento pai
 
-      this.content = content || "";//conteudo da janela
+      this.content = content || "";
       
-      this.title = title || "Janela bolada";      //título da janela     
+      this.title = title || "Janela bolada";           
 
-   } 
-   
+   }    
 
    CWindow.prototype.create = function(){
 
@@ -52,16 +53,84 @@ window.addEventListener("load", function(){
       var resize = false; //resize ativo
       var pResize = 0.8;//proporção de resize em %
       
-      var obj = this;
-
+      var obj = this;      
       
+      
+//-------------------destroy method of CWindow--------------------------------
       
       CWindow.prototype.destroy = function(){
   
          this.parent.removeChild(winObj); 
   
       }
+      
+      
+//-------------------CWButton - Chameleon Window button----------------------
+   
+   
+    function CWButton(height, width, color, radius, parent, clickEvent){
+   
+       this.height = height || 40; //altura do botão
+       this.width = width || 40; //largura do botão
+       this.color = color || "#f00";//cor do botão
+       this.radius = radius || 5;//raio da borda do botão
+       this.parent = parent || document.body;//pai do objeto
+       this.content = content || "";//conteúdo do objeto;
+       this.clickEvent = clickEvent || null;//função realizada ao clicar no botão
+   
+   }
 
+
+   CWButton.prototype.create = function(){
+   
+      var button = document.createElement("BUTTON");
+      
+      button.style.height = this.height + "px";
+      button.style.width = this.width + "px";
+      
+      button.style.backgroundColor = this.color;
+      
+      button.style.borderRadius = this.radius + "px";
+      button.style.borderStyle = "groove";
+      button.textContent = this.content;
+            
+      
+      if(this.clickEvent == "close"){      
+            
+            
+         button.addEventListener("click",function(){
+         
+         
+            obj.destroy();
+         
+         
+         } );    
+      
+      
+      }
+      
+      if(this.barAlign){
+      
+         closeButton.style.cssFloat = "right";
+         
+      }
+      else{
+      
+         pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
+      
+         winObj.addEventListener("mousemove", function(){
+         
+            pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
+      
+         });
+      }
+         
+      this.parent.appendChild(button);
+   
+   
+   }
+
+//-------------------------------------------------------------------------      
 
 
       winObj.addEventListener("mousedown", function(e){
@@ -119,8 +188,7 @@ window.addEventListener("load", function(){
                }
             
             }
-         }        
-         
+         }                 
          
 //se o x relativo for maior que pResize% do tamanho horizontal da janela         
          
@@ -171,6 +239,7 @@ window.addEventListener("load", function(){
       
       iconBar.style.height = "50px";
       iconBar.style.backgroundColor = this.barColor;
+      //iconBar.style.marginLeft = "2px";
       
             
       winObj.addEventListener("mousemove", function(){
@@ -198,62 +267,26 @@ window.addEventListener("load", function(){
      iconBar.appendChild(pTitle);
      
      
-     
 //---------------------botão fechar------------------------------------------*/     
-     
-     
-   var closeButton = document.createElement("BUTTON");
-      
-      
-      closeButton.style.height = "40px";
-      closeButton.style.width = "40px";
-      closeButton.style.margin = "5px";
-      
-      closeButton.style.backgroundColor = "#f00";
-      closeButton.textContent = "X";
-
-    
-     
-      if(this.barAlign){
-      
-         closeButton.style.cssFloat = "right";
-         
-      }
-      else{
-      
-         pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
-      
-         winObj.addEventListener("mousemove", function(){
-         
-            pTitle.style.left = (parseInt(winObj.style.width) - 11 * obj.title.length) + "px";
-      
-         });
-      }
-      
-      
-      closeButton.addEventListener("click", function(){
-      
-         
-         obj.destroy();
-      
-      });
-      
-                 
-      iconBar.appendChild(closeButton);    
   
+      
+      var closeButton = new CWButton();
+      
+      closeButton.content = "X";
+      closeButton.parent = iconBar;
+      closeButton.clickEvent = "close";
+      
+      
+      closeButton.create();
+                             
   }
+  
 
 /*---------------------------instancias-----------------------------------*/
    
-   var win = new CWindow();
-   
-   win.barAlign = false;
-   //win.barColor = "#0f0"; 
-   win.title = "Teste - titulo bolado";
-   
-   win.create();       
-  
+   var win = new CWindow(500, 500);
+   win.title = "Teste - Bolado.com.br - IguanaOS";
+   win.create();        
    
   
-
 });
