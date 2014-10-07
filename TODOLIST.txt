@@ -3,4 +3,6 @@
 	
 	
 2-criação de novos objetos. inputdialogs e etc.	
+
+3-Criação de textos não-selecionáveis.
 	
