@@ -1,0 +1,6 @@
+1-implementar um atributo de z-index pras janelas, de modo que a que tiver maior z-index terá prioridade (foreground)
+	sobre as outras de indice menor que estarão em background.
+	
+	
+2-criação de novos objetos. inputdialogs e etc.	
+	
