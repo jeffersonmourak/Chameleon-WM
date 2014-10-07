@@ -11,25 +11,29 @@ window.addEventListener("load", function(){
 
 //-------------------CGButton - Chameleon Generic button----------------------
       
-    function CGButton(height, width, color, barGradient, radius, bSize, parent, clickEvent, 
+    function CGButton(height, width, color, barGradient, radius, bSize, fSize, parent, bContent, clickEvent, 
       actionObj){
    
        this.height = height || 30; //altura do botão
        this.width = width || 30; //largura do botão
        this.color = color || "#f00";//cor do botão
        
-       this.barGradient = barGradient || true;
+       this.barGradient = barGradient || "linear-gradient(red, #faa)";
        
        this.radius = radius || 5;//raio da borda do botão
-       this.bSize = bSize || 3;
+       this.bSize = bSize || 2;//espessura da borda
+       
+       this.fSize = fSize || 15;//tamanho da fonte;
        
        this.parent = parent || document.body;//pai do objeto
-       this.content = content || "";//conteúdo do objeto;
+       this.bContent = bContent || "";//conteúdo do objeto;
        this.clickEvent = clickEvent || null;//função realizada ao clicar no botão
        
-       this.actionObj = actionObj || false;
+       this.actionObj = actionObj || false; /*objeto que será acionado caso
+         tenha a necessidade para a realização do evento
+       
+       */
     }
-
 
 /*---------------------create method of CGButton-------------------------------*/
    
@@ -39,19 +43,20 @@ window.addEventListener("load", function(){
       
       button.style.height = this.height + "px";
       button.style.width = this.width + "px";
-      
       button.style.backgroundColor = this.color;
-      
       button.style.borderRadius = this.radius + "px";
-      
       button.style.borderWidth = this.bSize + "px";
-      
       button.style.borderStyle = "groove";
-                
       button.textContent = this.content;
-                 
       button.style.margin = "5px";
-      button.style.color = "#fff";            
+      button.style.color = "#fff";   
+      button.style.fontSize = this.fSize + "px";   
+      button.style.fontWeight = "bold";
+      
+      if (this.barGradient){
+            
+         button.style.backgroundImage = this.barGradient;
+      }            
       
       var actObj =  this.actionObj;
             
@@ -60,55 +65,80 @@ window.addEventListener("load", function(){
          button.addEventListener("click",function(){
                   
             actObj.destroy();                  
-         });    
-            
+         });            
       }
       
       if(actObj.barAlign == true){
       
-         button.style.cssFloat = "right";
-         
-      }     
-         
+         button.style.cssFloat = "right";         
+      }        
+      
       this.parent.appendChild(button);  
    }
 
 /*--------------------objeto CDialog - Chameleon Dialog----------------------*/
 
-   function CDialog(msg, title , option, barAlign){
+   function CDialog(msg, title , option, barAlign, barColor){
          
       this.msg = msg || "Are you sure?";
       
-      this.title = title || "Message";
-      this.option = option || "yesno";    
-      this.barAlign = barAlign || false;           
+      this.title = title || "Message";//título do dialog
+      this.option = option || "yesno";    //tipo do dialog
+      this.barAlign = barAlign || false;//alinhamento dos icones da barra
+      
+      this.barColor = barColor || "#f00";//cor da barra
+                 
    }
       
    CDialog.prototype.create = function(){
    
-      var dialog = new CWindow(200, 300);
+      var dia = new CWindow(180, 280);
       
-      dialog.hStretch = dialog.vStretch = false;
-      dialog.title = this.title;
+      dia.hStretch = dia.vStretch = false;
+      dia.title = this.title;
                 
-      dialog.barAlign = this.barAlign;      
-      
-      var testeButton = new CGButton(50,100);    
-      
-      testeButton.parent = dialog.htmlObj;
-                           
-      dialog.create();      
-      
-      testeButton.create();    
+      dia.barAlign = this.barAlign;      
+        
+      dia.create(); 
+      if (this.option == "yesno"){
+            
+         dia.appendContent(this.msg, true, true);     
          
+         dia.divMargin = 20;     
+              
+//-------------------------botão yes------------------------------------*/              
+         var yes = new CGButton(50, 100);
+         
+         yes.parent = dia.innerDiv;
+         
+                  
+         yes.content = "Yes";         
+         yes.create();
+      
+      
+/*------------------------botão no---------------------------------------*/      
+      
+         var no = new CGButton(50, 100);
+         
+         no.parent = dia.innerDiv;
+         
+                  
+         no.content = "No";         
+         no.create();
+      
+      
+      
+      } 
+                               
+           
    }
 /*----------------------objeto CWindow - Chameleon Window--------------------*/   
    
    function CWindow(height, width, color, radius, bSize, drag, hStretch, vStretch, 
-      barAlign, barColor, barGradient , parent, content, title){
+      barAlign, barColor, barGradient , parent, content, title, divMargin){
 
-      this.height = height || 200; //altura da janela
-      this.width = width || 300; //largura da janela
+      this.height = height || 480; //altura da janela
+      this.width = width || 640; //largura da janela
       this.color = color || "#aaa";//cor da janela
       this.radius = radius || 10;//raio da borda da janela
       
@@ -124,12 +154,13 @@ window.addEventListener("load", function(){
             
       this.parent = parent || document.body;// null - body, else - elemento pai
 
-      this.content = content || "";
+      this.content = content || "";//conteúdo da janela - ver método append
       
-      this.title = title || "Janela bolada";     
+      this.title = title || "Janela bolada"; //título da janela    
       
-      this.barGradient = barGradient || "linear-gradient("+ this.barColor+ ", black)";       
-
+      this.barGradient = barGradient || "linear-gradient("+ this.barColor+ ", black)";    
+      
+      this.divMargin = divMargin || 5;   //margin
    }    
 
    CWindow.prototype.create = function(){
@@ -143,16 +174,14 @@ window.addEventListener("load", function(){
       
       winObj.style.borderWidth = this.bSize + "px";
       winObj.style.borderStyle = "groove";
-      
-           
-      
+          
 /*---------------------------div de conteudo---------------------------------*/           
       var divContent = document.createElement("DIV");
             
       divContent.textContent = this.content;
                    
       divContent.style.position = "relative";     
-      divContent.style.margin = "5px";
+      divContent.style.margin = this.divMargin + "px";
                     
       winObj.style.position = "absolute";//"absolute";
 
@@ -161,18 +190,30 @@ window.addEventListener("load", function(){
       var pResize = 0.8;//proporção de resize em %
       
       var obj = this;      
+      
+      this.innerDiv = divContent;
+      //console.log(divContent);
 
 
 //-------------------append content method of CWindow-------------------------
 
-      CWindow.prototype.appendContent = function(html, newline){
+      CWindow.prototype.appendContent = function(html, newline, after){
+         
+         if(newline && after){
+         
+            divContent.innerHTML += html + "<br />"; 
+         
+         }     
               
-         if(newline){     
-            divContent.innerHTML += "<br>" + html;     
+              
+         else if(newline){//caso newline, quebra de linha
+            divContent.innerHTML += "<br />" + html;     
          }
          
+         
+         
          else{
-            divContent.textContent += html;
+            divContent.textContent += html;//concatena conteúdo
          }
       }    
 
@@ -224,9 +265,9 @@ window.addEventListener("load", function(){
                                         
                           
              if(obj.vStretch && obj.hStretch){           
-               winObj.style.cursor = "se-resize";
+               winObj.style.cursor = "se-resize";//cursor resize bidirecional
                
-               if(lmb){
+               if(lmb){//mudança da largura e altura com o mouse
                
                   winObj.style.width = (rX + 30) + "px";
                   winObj.style.height = (rY + 30) + "px";
@@ -276,15 +317,13 @@ window.addEventListener("load", function(){
       
       obj.parent.appendChild(winObj); 
                 
-      this.obj = winObj;          
-                
-       
+      this.obj = winObj;         
       
  //-----------------------barra de ícones -------------------------------*/     
       
       var iconBar = document.createElement("DIV");
             
-      iconBar.style.height = "50px";
+      iconBar.style.height = "45px";
       iconBar.style.backgroundColor = this.barColor;
             
       iconBar.style.position = "relative";    
@@ -300,6 +339,9 @@ window.addEventListener("load", function(){
       
       winObj.appendChild(divContent);
       winObj.insertBefore(iconBar, divContent);
+      
+      this.bar = iconBar;  
+      
       
 //--------------------------title-------------------------------------------        
      
@@ -329,10 +371,10 @@ window.addEventListener("load", function(){
         
       var closeButton = new CGButton();
       
-      closeButton.content = "X";
-      closeButton.parent = iconBar;
-      closeButton.clickEvent = "close";
-      closeButton.actionObj = obj;
+      closeButton.content = "X";//conteudo do botão
+      closeButton.parent = iconBar;//objeto HTML
+      closeButton.clickEvent = "close";//evento do botão
+      closeButton.actionObj = obj;//objeto que sofrerá a ação
             
       closeButton.create();                             
   } 
@@ -347,9 +389,7 @@ window.addEventListener("load", function(){
 /*---------------------------instancias-----------------------------------*/
         
   var dialog = new CDialog();
-  
-  dialog.barAlign = true;
     
-  dialog.create();
+   dialog.create();     
    
 });
