@@ -2,7 +2,4 @@
 	sobre as outras de indice menor que estarão em background.
 	
 	
-2-criação de novos objetos. inputdialogs e etc.	
-
-3-Criação de textos não-selecionáveis.
-	
+2-criação de novos objetos. inputdialogs e etc.
