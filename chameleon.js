@@ -8,7 +8,7 @@
 
 window.addEventListener("load", function(){
 
-//-------------------Disabel Text selection ---------------------------------
+//-------------------Disable Text selection ---------------------------------
 
     var head = document.querySelector("head");
     var style = document.createElement('style');
@@ -74,7 +74,7 @@ window.addEventListener("load", function(){
          });            
       }
       
-      if(actObj.barAlign == true){
+      if(actObj.barAlign == true){//bar align caso ativado
       
          button.style.cssFloat = "right";         
       }        
@@ -116,8 +116,7 @@ window.addEventListener("load", function(){
          var yes = new CGButton(50, 100);
          
          yes.parent = dia.innerDiv;
-         
-                  
+                           
          yes.content = "Yes";         
          yes.create();
       
@@ -127,21 +126,17 @@ window.addEventListener("load", function(){
          var no = new CGButton(50, 100);
          
          no.parent = dia.innerDiv;
-         
-                  
+                           
          no.content = "No";         
          no.create();
-      
-      
-      
-      } 
-                               
-           
+                  
+      }           
    }
 /*----------------------objeto CWindow - Chameleon Window--------------------*/   
    
    function CWindow(height, width, color, radius, bSize, drag, hStretch, vStretch, 
-      barAlign, barColor, barGradient , parent, content, title, divMargin){
+      barAlign, barColor, barGradient , parent, content, title, divMargin, 
+      posX, posY){
 
       this.height = height || 480; //altura da janela
       this.width = width || 640; //largura da janela
@@ -164,11 +159,17 @@ window.addEventListener("load", function(){
       
       this.title = title || "Janela bolada"; //título da janela    
       
-      this.barGradient = barGradient || "linear-gradient("+ this.barColor+ ", black)";    
+      this.barGradient = barGradient || 
+         "linear-gradient("+ this.barColor+ ", black)";    
       
       this.divMargin = divMargin || 5;   //margin
+      
+      this.posX = posX || 0;//posição da janela, eixo x
+      this.posY = posY || 0;//posição da janela, eixo y     
+      
    }    
 
+//------------------------create method of CWindow---------------------------*/
    CWindow.prototype.create = function(){
 
       var winObj = document.createElement("DIV");
@@ -208,15 +209,12 @@ window.addEventListener("load", function(){
          if(newline && after){
          
             divContent.innerHTML += html + "<br />"; 
-         
          }     
               
               
          else if(newline){//caso newline, quebra de linha
             divContent.innerHTML += "<br />" + html;     
-         }
-         
-         
+         }        
          
          else{
             divContent.textContent += html;//concatena conteúdo
@@ -256,7 +254,7 @@ window.addEventListener("load", function(){
          
          var mX = x - obj.width / 2; //x médio da janela
          var mY = y - obj.height / 2;//y médio da janela
-         var bY = (parseInt(winObj.style.height.replace("px",""))/2) - 15;
+         var bY = (parseInt(winObj.style.height.replace("px",""))/2) - 40;
          
          if(lmb && obj.drag && !resize){                                              
             winObj.style.left = mX + "px";
@@ -314,12 +312,20 @@ window.addEventListener("load", function(){
          else{
             //caso contrário, cursor default
             winObj.style.cursor = "default";
-         }
+         }        
          
+         obj.posX = parseInt(winObj.style.left);
+         obj.posY = parseInt(winObj.style.top);
+                  
       });      
       
-      winObj.style.overflow = "hidden";
+      winObj.style.overflow = "hidden";      
       
+//---------------------------posição da janela--------------------------------
+
+      winObj.style.left = obj.posX + "px";
+      winObj.style.top = obj.posY + "px";      
+               
       obj.parent.appendChild(winObj); 
                 
       this.obj = winObj;         
@@ -389,12 +395,26 @@ window.addEventListener("load", function(){
       CWindow.prototype.destroy = function(){
   
          this.parent.removeChild(this.obj);
-      }   
+      }
+      
+/*-----------------------method setPosition of CWindow--------------------*/
+
+      CWindow.prototype.setPosition = function(x, y){
+      
+         var winObj = this.obj;
+         
+         winObj.style.left = x + "px";
+         winObj.style.top = y + "px";
+           
+      }         
 
 /*---------------------------instancias-----------------------------------*/
         
-  var dialog = new CDialog();
+  
   var wn = new CWindow();
-   dialog.create();     
+       
    wn.create();
+   
+   wn.setPosition(50, 100);
+   
 });
