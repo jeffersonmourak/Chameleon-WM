@@ -1,16 +1,22 @@
 //---------------------------init--------------------------------------------
 /*
    Developed by EasyJS
-   Last modifier: Lucas Vendramini - 2014
+   Last modifier: Lucas Vendramini & Jefferson Moura - 2014
 */
 
 //---------------------------init--------------------------------------------
 
 window.addEventListener("load", function(){
 
+//-------------------Disabel Text selection ---------------------------------
+
+    var head = document.querySelector("head");
+    var style = document.createElement('style');
+    style.innerHTML = ".noselect{-webkit-touch-callout: none;\n-webkit-user-select: none;\n-khtml-user-select: none;\n-moz-user-select: none;\n-ms-user-select: none;\nuser-select: none;}";
+    head.appendChild(style);
 
 //-------------------CGButton - Chameleon Generic button----------------------
-      
+    
     function CGButton(height, width, color, barGradient, radius, bSize, fSize, parent, bContent, clickEvent, 
       actionObj){
    
@@ -171,7 +177,7 @@ window.addEventListener("load", function(){
       winObj.style.width = this.width + "px";
       winObj.style.backgroundColor = this.color;
       winObj.style.borderRadius = this.radius + "px";
-      
+      winObj.className = "noselect";
       winObj.style.borderWidth = this.bSize + "px";
       winObj.style.borderStyle = "groove";
           
@@ -250,12 +256,11 @@ window.addEventListener("load", function(){
          
          var mX = x - obj.width / 2; //x médio da janela
          var mY = y - obj.height / 2;//y médio da janela
-           
+         var bY = (parseInt(winObj.style.height.replace("px",""))/2) - 15;
          
-         if(lmb && obj.drag && !resize){
-                                                          
+         if(lmb && obj.drag && !resize){                                              
             winObj.style.left = mX + "px";
-            winObj.style.top = mY + "px";
+            winObj.style.top = (mY + bY) + "px";
          }                
          
 //se o x e y relativos forem maior que pResize% do tamanho horizontal
@@ -389,7 +394,7 @@ window.addEventListener("load", function(){
 /*---------------------------instancias-----------------------------------*/
         
   var dialog = new CDialog();
-    
+  var wn = new CWindow();
    dialog.create();     
-   
+   wn.create();
 });
