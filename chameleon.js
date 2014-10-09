@@ -3,6 +3,50 @@
    Developed by EasyJS
    Last modifier: Lucas Vendramini & Jefferson Moura - 2014
 */
+//-------------------------map of windows------------------------------------
+
+function global(){
+  var windows = []
+  return {
+    addWindow : function(obj){
+      windows[windows.length] = {id : "w"+windows.length,zindex : windows.length,object : obj};
+      return "w"+(windows.length - 1);
+    },
+    removeWindow : function(wId){
+      var indexOf = -1;
+      for(var i = 0; i < windows.length; i+=1){
+        if(windows[i].id == wId){
+          indexOf = i;
+          break;
+        }
+      }
+      windows.splice(indexOf,1);
+    },
+    changeZindex : function(wId){
+      var backup;
+      var index;
+      for(var i = 0; i < windows.length; i+=1){
+        if(windows[i].id == wId){
+          index = i;
+          backup = windows[i];
+          break;
+        }
+      }
+      for(var i = 0; i < windows.length; i+=1){
+        if(windows[i].zindex > windows[index].zindex){
+          windows[i].zindex -= 1;
+        }
+      }
+      windows.splice(index,1);
+      backup.zindex = windows.length;
+      windows[windows.length] = backup;
+      for(var i = 0; i < windows.length; i+=1){
+        windows[i].object.style.zIndex = windows[i].zindex;
+      }
+    },
+  };
+}
+global = new global();
 
 //---------------------------init--------------------------------------------
 
@@ -166,7 +210,6 @@ window.addEventListener("load", function(){
       
       this.posX = posX || 0;//posição da janela, eixo x
       this.posY = posY || 0;//posição da janela, eixo y     
-      
    }    
 
 //------------------------create method of CWindow---------------------------*/
@@ -181,6 +224,8 @@ window.addEventListener("load", function(){
       winObj.className = "noselect";
       winObj.style.borderWidth = this.bSize + "px";
       winObj.style.borderStyle = "groove";
+      this.id = global.addWindow(winObj); //gerador de ID;
+      var id = this.id; //põe o ID no escopo local
           
 /*---------------------------div de conteudo---------------------------------*/           
       var divContent = document.createElement("DIV");
@@ -227,7 +272,7 @@ window.addEventListener("load", function(){
       }    
 
       winObj.addEventListener("mousedown", function(e){
-         
+         global.changeZindex(id); //Move a janela para a frente
          oldPosition.x = this.offsetLeft - e.clientX;
          oldPosition.y = this.offsetTop - e.clientY;
          
@@ -401,7 +446,7 @@ window.addEventListener("load", function(){
 //-------------------destroy method of CWindow--------------------------------
       
       CWindow.prototype.destroy = function(){
-  
+         global.removeWindow(this.id); //remove a janela do mapa
          this.parent.removeChild(this.obj);
       }
       
@@ -424,5 +469,11 @@ window.addEventListener("load", function(){
    wn.create();
    
    wn.setPosition(50, 100);
+
+   var wn2 = new CWindow();
+
+   wn2.create();
+
+   wn2.setPosition(25,10);
    
 });
