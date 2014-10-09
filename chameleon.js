@@ -196,6 +196,11 @@ window.addEventListener("load", function(){
       var resize = false; //resize ativo
       var pResize = 0.8;//proporção de resize em %
       
+      var oldPosition = {
+        x: 0,
+        y: 0
+      };
+      
       var obj = this;      
       
       this.innerDiv = divContent;
@@ -222,6 +227,9 @@ window.addEventListener("load", function(){
       }    
 
       winObj.addEventListener("mousedown", function(e){
+         
+         oldPosition.x = this.offsetLeft - e.clientX;
+         oldPosition.y = this.offsetTop - e.clientY;
          
          lmb = true;   
          
@@ -257,8 +265,8 @@ window.addEventListener("load", function(){
          var bY = (parseInt(winObj.style.height.replace("px",""))/2) - 40;
          
          if(lmb && obj.drag && !resize){                                              
-            winObj.style.left = mX + "px";
-            winObj.style.top = (mY + bY) + "px";
+            winObj.style.left = (x + oldPosition.x) + "px";
+            winObj.style.top =  (y + oldPosition.y) + "px";
          }                
          
 //se o x e y relativos forem maior que pResize% do tamanho horizontal
