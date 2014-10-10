@@ -5,13 +5,14 @@
 */
 //-------------------------map of windows------------------------------------
 
-function global(){
+function Global(){
   var windows = []
   return {
-    addWindow : function(obj){
-      windows[windows.length] = {id : "w"+windows.length,zindex : windows.length,object : obj};
+    addWindow : function(obj,title,icon){
+      windows[windows.length] = {id : "w"+windows.length , zindex : windows.length , object : obj , title : title , icon : icon};
       return "w"+(windows.length - 1);
     },
+    /*-----------------------remove a janela do mapa------------------------------*/ 
     removeWindow : function(wId){
       var indexOf = -1;
       for(var i = 0; i < windows.length; i+=1){
@@ -22,6 +23,7 @@ function global(){
       }
       windows.splice(indexOf,1);
     },
+    /*-----------------------modifica o z-index da janela -----------------------*/
     changeZindex : function(wId){
       var backup;
       var index;
@@ -42,11 +44,37 @@ function global(){
       windows[windows.length] = backup;
       for(var i = 0; i < windows.length; i+=1){
         windows[i].object.style.zIndex = windows[i].zindex;
+        this._stylize(wId);
       }
+    },
+    /*-----------------------modifica a classe das janelas -----------------------*/
+    _stylize : function(wId){
+      for(var i = 0; i < windows.length; i+=1){
+        if(windows[i].id == wId){
+          windows[i].object.className = "window noselect active";
+        }
+        else{
+          windows[i].object.className = "window noselect inactive";
+        }
+      }
+      var changeFocus = new Event("changeWindowFocus");
+      document.dispatchEvent(changeFocus);
+    },
+    /*-----------------------Lista as informações das janelas abertas-----------------------*/
+    list : function(){
+      var windowList = [];
+      for(var i = 0; i < windows.length; i+=1){
+        var active = false;
+        if(windows[i].object.className.indexOf(" active") > -1){
+          active = true;
+        }
+        windowList[i] = {id : windows[i].id, active : active,title:windows[i].title,icon:windows[i].icon};
+      }
+      return windowList;
     },
   };
 }
-global = new global();
+global = new Global();
 
 //---------------------------init--------------------------------------------
 
@@ -57,7 +85,11 @@ window.addEventListener("load", function(){
     var head = document.querySelector("head");
     var style = document.createElement('style');
     style.innerHTML = ".noselect{-webkit-touch-callout: none;\n-webkit-user-select: none;\n-khtml-user-select: none;\n-moz-user-select: none;\n-ms-user-select: none;\nuser-select: none;}";
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "window.css";
     head.appendChild(style);
+    head.appendChild(css);
 
 //-------------------CGButton - Chameleon Generic button----------------------
     
@@ -89,38 +121,29 @@ window.addEventListener("load", function(){
    
    CGButton.prototype.create = function(){
    
-      var button = document.createElement("BUTTON");
-      
-      button.style.height = this.height + "px";
-      button.style.width = this.width + "px";
-      button.style.backgroundColor = this.color;
-      button.style.borderRadius = this.radius + "px";
-      button.style.borderWidth = this.bSize + "px";
-      button.style.borderStyle = "groove";
-      button.textContent = this.content;
-      button.style.margin = "5px";
-      button.style.color = "#fff";   
-      button.style.fontSize = this.fSize + "px";   
-      button.style.fontWeight = "bold";
-      
-      if (this.barGradient){
-            
-         button.style.backgroundImage = this.barGradient;
-      }            
+      var button = document.createElement("BUTTON");          
       
       var actObj =  this.actionObj;
-            
+      button.textContent = this.content;
       if(this.clickEvent == "close"){      
-                 
+          button.className = "close";
          button.addEventListener("click",function(){
                   
             actObj.destroy();                  
          });            
       }
+      else{
+        button.style.height = this.height + "px";
+        button.style.width = this.width + "px";
+        button.className = "button"; 
+      }
       
       if(actObj.barAlign == true){//bar align caso ativado
       
-         button.style.cssFloat = "right";         
+         button.style.right = "0px";         
+      }
+      else{
+          button.style.left = "0px";
       }        
       
       this.parent.appendChild(button);  
@@ -153,7 +176,6 @@ window.addEventListener("load", function(){
       if (this.option == "yesno"){
             
          dia.appendContent(this.msg, true, true);     
-         
          dia.divMargin = 20;     
               
 //-------------------------botão yes------------------------------------*/              
@@ -179,7 +201,7 @@ window.addEventListener("load", function(){
 /*----------------------objeto CWindow - Chameleon Window--------------------*/   
    
    function CWindow(height, width, color, radius, bSize, drag, hStretch, vStretch, 
-      barAlign, barColor, barGradient , parent, content, title, divMargin, 
+      barAlign, barColor, barGradient , parent, content, title, icon, divMargin, 
       posX, posY){
 
       this.height = height || 480; //altura da janela
@@ -201,8 +223,8 @@ window.addEventListener("load", function(){
 
       this.content = content || "";//conteúdo da janela - ver método append
       
-      this.title = title || "Janela bolada"; //título da janela    
-      
+      this.title = title || "Janela Vazia"; //título da janela    
+      this.icon = icon || "icon.png";
       this.barGradient = barGradient || 
          "linear-gradient("+ this.barColor+ ", black)";    
       
@@ -217,16 +239,15 @@ window.addEventListener("load", function(){
 
       var winObj = document.createElement("DIV");
 
+      winObj.className = "noselect window";
       winObj.style.height = this.height + "px";
       winObj.style.width = this.width + "px";
-      winObj.style.backgroundColor = this.color;
-      winObj.style.borderRadius = this.radius + "px";
-      winObj.className = "noselect";
-      winObj.style.borderWidth = this.bSize + "px";
-      winObj.style.borderStyle = "groove";
-      this.id = global.addWindow(winObj); //gerador de ID;
+      if(this.barAlign){
+
+      }
+      this.id = global.addWindow(winObj,this.title,this.icon); //gerador de ID;
       var id = this.id; //põe o ID no escopo local
-          
+      global.changeZindex(id);
 /*---------------------------div de conteudo---------------------------------*/           
       var divContent = document.createElement("DIV");
             
@@ -274,7 +295,7 @@ window.addEventListener("load", function(){
       winObj.addEventListener("mousedown", function(e){
          global.changeZindex(id); //Move a janela para a frente
          oldPosition.x = this.offsetLeft - e.clientX;
-         oldPosition.y = this.offsetTop - e.clientY;
+         oldPosition.y = (this.offsetTop - e.clientY) - 40;
          
          lmb = true;   
          
@@ -306,10 +327,10 @@ window.addEventListener("load", function(){
          var rY = y - this.offsetTop;//y relativo da janela
          
          var mX = x - obj.width / 2; //x médio da janela
-         var mY = y - obj.height / 2;//y médio da janela
+         var mY = y - (obj.height / 2) - 120;//y médio da janela
          var bY = (parseInt(winObj.style.height.replace("px",""))/2) - 40;
          
-         if(lmb && obj.drag && !resize){                                              
+         if(lmb && obj.drag && !resize){                                             
             winObj.style.left = (x + oldPosition.x) + "px";
             winObj.style.top =  (y + oldPosition.y) + "px";
          }                
@@ -387,18 +408,10 @@ window.addEventListener("load", function(){
       
       var iconBar = document.createElement("DIV");
             
-      iconBar.style.height = "45px";
-      iconBar.style.backgroundColor = this.barColor;
-            
-      iconBar.style.position = "relative";    
-      
-      if(obj.barGradient){
-         iconBar.style.backgroundImage = obj.barGradient;    
-      }      
+      iconBar.className = "bar";    
       winObj.addEventListener("mousemove", function(){
          iconBar.style.width = (parseInt(winObj.style.width)) + "px";
       });
-      
       iconBar.style.overflow = "hidden";            
       
       winObj.appendChild(divContent);
@@ -410,27 +423,56 @@ window.addEventListener("load", function(){
 //--------------------------title-------------------------------------------        
      
      var pTitle = document.createElement("P");
-     
+     global._stylize(this.id);
      pTitle.textContent = obj.title;
-     pTitle.style.color = "#fff";
-     pTitle.style.fontWeight = "bold";
-     pTitle.style.margin = "10px";
-     pTitle.style.position = "absolute";
-     
-     iconBar.appendChild(pTitle);   
-     
-     
-      if(!this.barAlign){
+     pTitle.className = "title";
+     if(!this.barAlign){
       
-         pTitle.style.left = (parseInt(winObj.style.width) - 13 * obj.title.length) + "px";
+          pTitle.style.right = "40px";
       
          winObj.addEventListener("mousemove", function(){
          
-            pTitle.style.left = (parseInt(winObj.style.width) - 13 * obj.title.length) + "px";
+             pTitle.style.right = "40px";
+      
+         });
+      }
+      else{
+         pTitle.style.left = "40px";
+      
+         winObj.addEventListener("mousemove", function(){
+         
+             pTitle.style.left = "40px";
       
          });
       }      
-     
+     iconBar.appendChild(pTitle);
+      
+//---------------------application Icon--------------------------------------*/
+
+    var barIcon = document.createElement("img");
+    barIcon.src = this.icon;
+    barIcon.className = "icon";
+    if(!this.barAlign){
+      
+          barIcon.style.right = "0px";
+      
+         winObj.addEventListener("mousemove", function(){
+         
+             barIcon.style.right = "0px";
+      
+         });
+      }
+      else{
+         barIcon.style.left = "0px";
+      
+         winObj.addEventListener("mousemove", function(){
+         
+             barIcon.style.left = "0px";
+      
+         });
+      }      
+     iconBar.appendChild(barIcon);
+
 //---------------------botão fechar------------------------------------------*/     
         
       var closeButton = new CGButton();
@@ -447,6 +489,7 @@ window.addEventListener("load", function(){
       
       CWindow.prototype.destroy = function(){
          global.removeWindow(this.id); //remove a janela do mapa
+         listWindows();
          this.parent.removeChild(this.obj);
       }
       
@@ -455,7 +498,6 @@ window.addEventListener("load", function(){
       CWindow.prototype.setPosition = function(x, y){
       
          var winObj = this.obj;
-         
          winObj.style.left = x + "px";
          winObj.style.top = y + "px";
            
@@ -463,17 +505,51 @@ window.addEventListener("load", function(){
 
 /*---------------------------instancias-----------------------------------*/
         
-  
-  var wn = new CWindow();
-       
-   wn.create();
-   
-   wn.setPosition(50, 100);
+  // msg, title , option, barAlign, barColor
+    var wn = new CWindow();
+    var dialog = new CDialog("Gabiarra.Net quer acessar seu computador","Acesso ao sistema","yesno",false,false);
+    dialog.create();
 
-   var wn2 = new CWindow();
 
-   wn2.create();
-
-   wn2.setPosition(25,10);
-   
+    //-------------------------------------------- developer tests ---------------------------------------------*/
+    var a = {
+        _b : [],
+        create : function(){
+            var index = this._b[this._b.length];
+            this._b[index] = new CWindow(300, 300, "#fff", "2px", "10", true, true, true, true, "#ccc", false , false, false, ("window "+ Math.floor(Math.random() * 10)));
+            this._b[index].create();
+            this._b[index].setPosition(80,60);
+        }
+    };
+    document.querySelector("#bt").addEventListener("click",function(){
+        a.create();
+        listWindows();
+    },false);
 });
+
+
+document.addEventListener("changeWindowFocus",listWindows,false);
+
+function listWindows(){
+    var windowsOpeneds = global.list();
+    var bottomBar = document.querySelector(".bottombar");
+    bottomBar.innerHTML = "";
+    for(var i = 0; i < windowsOpeneds.length; i+=1){
+        var p = document.createElement("p");
+        if(windowsOpeneds[i].active){
+            p.style.color = "#f00";
+            p.textContent = windowsOpeneds[i].title;
+            p.setAttribute("wid",windowsOpeneds[i].id);
+        }
+        else{
+            p.style.color = "#000";
+            p.textContent = windowsOpeneds[i].title;
+            p.setAttribute("wid",windowsOpeneds[i].id);
+        }
+        p.addEventListener("click",function(){
+            var wid = this.getAttribute("wid");
+            global.changeZindex(wid);
+        },false);
+        bottomBar.appendChild(p);
+    }
+}

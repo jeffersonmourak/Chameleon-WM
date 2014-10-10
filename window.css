@@ -1,0 +1,204 @@
+body{
+	overflow: hidden;
+}
+@keyframes hoverClose
+{
+from {background: #dadada;color:#333;}
+to {background: #db4531;color:#fff;}
+}
+  
+@-moz-keyframes hoverClose /* Firefox */
+{
+from {background: #dadada;color:#333;}
+to {background: #db4531;color:#fff;}
+}
+  
+@-webkit-keyframes hoverClose /* Safari e Chrome */
+{
+from {background: #dadada;color:#333;}
+to {background: #db4531;color:#fff;}
+}
+  
+@-o-keyframes hoverClose /* Opera */
+{
+from {background: #dadada;color:#333;}
+to {background: #db4531;color:#fff;}
+}
+
+/*-----------------------------------------------*/
+
+@keyframes overClose
+{
+from {background: #db4531;color:#fff;}
+to {background: #dadada;color:#333;}
+}
+  
+@-moz-keyframes overClose /* Firefox */
+{
+from {background: #db4531;color:#fff;}
+to {background: #dadada;color:#333;}
+}
+  
+@-webkit-keyframes overClose /* Safari e Chrome */
+{
+from {background: #db4531;color:#fff;}
+to {background: #dadada;color:#333;}
+}
+  
+@-o-keyframes overClose /* Opera */
+{
+from {background: #db4531;color:#fff;}
+to {background: #dadada;color:#333;}
+}
+
+/*-----------------------------------------------*/
+
+@keyframes hoverButton
+{
+from {background: #196EEE;color:#fff;}
+to {background: #009E59;color:#fff;}
+}
+  
+@-moz-keyframes hoverButton /* Firefox */
+{
+from {background: #196EEE;color:#fff;}
+to {background: #009E59;color:#fff;}
+}
+  
+@-webkit-keyframes hoverButton /* Safari e Chrome */
+{
+from {background: #196EEE;color:#fff;}
+to {background: #009E59;color:#fff;}
+}
+  
+@-o-keyframes hoverButton /* Opera */
+{
+from {background: #196EEE;color:#fff;}
+to {background: #009E59;color:#fff;}
+}
+
+/*-----------------------------------------------*/
+
+@keyframes overButton
+{
+from {background: #009E59;color:#fff;}
+to {background: #196EEE;color:#fff;}
+}
+  
+@-moz-keyframes overButton /* Firefox */
+{
+from {background: #009E59;color:#fff;}
+to {background: #196EEE;color:#fff;}}
+}
+  
+@-webkit-keyframes overButton /* Safari e Chrome */
+{
+from {background: #009E59;color:#fff;}
+to {background: #196EEE;color:#fff;}
+}
+  
+@-o-keyframes overButton /* Opera */
+{
+from {background: #009E59;color:#fff;}
+to {background: #196EEE;color:#fff;}
+}
+.window{ 
+	background-color: #fff; 
+	border-radius: 4px; 
+	border-width: 1px; 
+	border-style: solid;
+	border-color: #b3b3aa;
+	position: absolute; 
+	overflow: hidden; 
+	left: 50px; 
+	top: 100px;
+	font-family: arial;
+	box-shadow: 
+}
+.bar{
+	height: 40px; 
+	position: relative;
+	overflow: hidden;
+}
+.active{
+	-webkit-box-shadow: 6px 6px 20px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    6px 6px 20px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         6px 6px 20px 0px rgba(50, 50, 50, 0.75);
+}
+.inactive{
+	-webkit-box-shadow: 3px 3px 4px 0px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    3px 3px 4px 0px rgba(50, 50, 50, 0.75);
+	box-shadow:         3px 3px 4px 0px rgba(50, 50, 50, 0.75);
+}
+.active > .bar{
+	background-color: #dadada; 
+}
+.inactive > .bar{
+	background-color: #eee; 
+}
+.title{
+	color: #333; 
+	margin: 10px; 
+	position: absolute; 
+}
+.close{
+	height: 30px; 
+	width: 30px; 
+	margin: 5px; 
+	color: #333;
+	animation:overClose 0.7s;
+	-moz-animation:overClose 0.7s; /* Firefox */
+	-webkit-animation:overClose 0.7s; /* Safari e Chrome */
+	-o-animation:overClose 0.7s; /* Opera */
+	background-color: #dadada;
+	border:none;
+	border-radius: 2px;
+	position: absolute;
+	right: 0px;
+}
+.close:hover{
+	animation:hoverClose 0.7s;
+	-moz-animation:hoverClose 0.7s; /* Firefox */
+	-webkit-animation:hoverClose 0.7s; /* Safari e Chrome */
+	-o-animation:hoverClose 0.7s; /* Opera */
+	background-color: #db4531;
+	color:#fff;
+}
+.close:active{
+	background-color: #ce3a28;
+	padding: 0px;
+}
+.content{
+	position: relative; 
+	padding: 10px;
+}
+
+.button{
+	margin: 5px; 
+	color: #fff;
+	animation:overButton 0.7s;
+	-moz-animation:overButton 0.7s; /* Firefox */
+	-webkit-animation:overButton 0.7s; /* Safari e Chrome */
+	-o-animation:overButton 0.7s; /* Opera */
+	background-color: #196EEE; /*196EEE*/
+	border:none;
+	border-radius: 2px;
+}
+.button:hover{
+	animation:hoverButton 0.7s;
+	-moz-animation:hoverButton 0.7s; /* Firefox */
+	-webkit-animation:hoverButton 0.7s; /* Safari e Chrome */
+	-o-animation:hoverButton 0.7s; /* Opera */
+	background-color: #009E59;
+	color:#fff;
+}
+.button:active{
+	background-color: #00914C;
+	padding: 0px;
+}
+.icon{
+	width: 32px;
+	height: 32px;
+	margin: 4px;
+	position: absolute;
+}
